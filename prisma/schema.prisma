@@ -23,8 +23,11 @@ model Bicycles {
   id        Int   @default(autoincrement()) @id
   marca     String
   color     String
-  estado    Estado
+  estado    Estado @default(DISPONIBLE)
   precio    Float
+  status    Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("bicycles")
 }
