@@ -12,9 +12,11 @@ export class BicyclesService {
   }
 
   async findAll(): Promise<Bicycles[]> {
-    return await this.prismaService.bicycles.findMany({
+    const allBicycles = await this.prismaService.bicycles.findMany({
       where: { status: true },
     });
+
+    return allBicycles.reverse();
   }
 
   async findOneById(id: number): Promise<Bicycles> {
