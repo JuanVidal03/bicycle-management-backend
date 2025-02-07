@@ -7,17 +7,20 @@ import {
   Param,
   Patch,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { BicyclesService } from '../application/bicycles.service';
 import { BicycleResponse } from '../domain/interface/bicycleResponse.interface';
 import { Bicycles } from '@prisma/client';
 import { CreateBicycleDto } from '../domain/dto/createBicycle.dto';
 import { BicycleSchema } from '../domain/interface/bicycleSchema.interface';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('bicycles')
 export class BicyclesController {
   constructor(private readonly bicyclesService: BicyclesService) {}
 
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   async createBicycle(
     @Body() bicycle: CreateBicycleDto,
@@ -40,6 +43,7 @@ export class BicyclesController {
     };
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   async findAllBicycles(): Promise<BicycleResponse> {
     const bicycles: Bicycles[] = await this.bicyclesService.findAll();
@@ -61,6 +65,7 @@ export class BicyclesController {
     };
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   async findById(@Param('id') id: string): Promise<BicycleResponse> {
     const bicycle: Bicycles = await this.bicyclesService.findOneById(
@@ -82,6 +87,7 @@ export class BicyclesController {
     };
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
   async updateById(
     @Param('id') id: string,
@@ -107,6 +113,7 @@ export class BicyclesController {
     };
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   async deleteById(@Param('id') id: string): Promise<BicycleResponse> {
     const bicycle = await this.bicyclesService.deleteById(Number(id));

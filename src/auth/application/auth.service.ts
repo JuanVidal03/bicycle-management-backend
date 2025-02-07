@@ -11,12 +11,16 @@ import { Users } from '@prisma/client';
 import { CreateUserDto } from '../domain/dto/createUser.dto';
 import * as bcryptjs from 'bcryptjs';
 import { CredentialsDto } from '../domain/dto/credentials.dto';
+import { LoginResponse } from '../domain/interface/loginResponse.interface';
+import { JwtService } from '@nestjs/jwt';
+import { LoginPayload } from '../domain/interface/loginPayload.interface';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly userService: UsersService,
+    private readonly jwtService: JwtService,
   ) {}
 
   private readonly logger = new Logger(AuthService.name);
@@ -58,17 +62,21 @@ export class AuthService {
     }
   }
 
-  async login(credentials: CredentialsDto): Promise<any> {
+  async login(credentials: CredentialsDto): Promise<LoginResponse> {
     const { email, password } = credentials;
 
     const user = await this.validateUser(email, password);
 
-    // LOGIC TO GENERATE TOKEN
+    const payload: LoginPayload = {
+      email: user.email,
+      rol: user.rol,
+      id: user.id,
+    };
 
     return {
       rol: user.rol,
       email: user.email,
-      accessToken: 'asdkjaskdjhaskjdhashd',
+      accessToken: this.jwtService.sign(payload),
     };
   }
 
